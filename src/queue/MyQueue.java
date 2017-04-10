@@ -3,44 +3,64 @@ package queue;
 /**
  * Created by bu on 4/10/2017.
  */
-public class MyQueue {
-    private int[] array = new int[4];
-    private int head = 1;
-    private int tail = 1;
+public class MyQueue<E> {
+    private Object[] data = null;
+    private int maxSize; //队列容量
+    private int front;  //队列头，允许删除
+    private int rear;   //队列尾，允许插入
 
-    //入队
-    public void enqueue(int x) {
-        //处理上溢
-        try {
-            if (head != tail + 1) {
-                array[tail++] = x;
-                if (tail == array.length) {
-                    tail = 0;
-                }
-            } else {
-                System.out.println("overflow");
-                throw new Exception("queue overflow");
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
+    //构造函数
+    public MyQueue() {
+        this(10);
+    }
+
+    public MyQueue(int initialSize) {
+        if (initialSize >= 0) {
+            this.maxSize = initialSize;
+            data = new Object[initialSize];
+            front = rear = 0;
+        } else {
+            throw new RuntimeException("初始化大小不能小于0：" + initialSize);
+        }
+    }
+
+    //判空
+    public boolean empty() {
+        return rear == front ? true : false;
+    }
+
+    //插入
+    public boolean add(E e) {
+        if (rear == maxSize) {
+            throw new RuntimeException("队列已满，无法插入新的元素！");
+        } else {
+            data[rear++] = e;
+            return true;
+        }
+    }
+
+    //返回队首元素，但不删除
+    public E peek() {
+        if (empty()) {
+            throw new RuntimeException("空队列异常！");
+        } else {
+            return (E) data[front];
         }
     }
 
     //出队
-    public int dequeue() {
-        int number = 0;
-        try {
-            if (tail != head) {
-                number = array[head];
-                head++;
-            } else {
-                throw new Exception("queue underflow");
-            }
-
-        } catch (Exception e) {
-            System.out.println("underflow");
-            e.printStackTrace();
+    public E poll() {
+        if (empty()) {
+            throw new RuntimeException("空队列异常！");
+        } else {
+            E value = (E) data[front];  //保留队列的front端的元素的值
+            data[front++] = null;     //释放队列的front端的元素
+            return value;
         }
-        return number;
+    }
+
+    //队列长度
+    public int length() {
+        return rear - front;
     }
 }
