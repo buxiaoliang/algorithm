@@ -56,42 +56,40 @@ public class Sorting {
         return array;
     }
 
+    // 快速排序
+    public static void quickSort(int[] arr) {
+        qsort(arr, 0, arr.length - 1);
+    }
+
     /**
      * 快速排序
      * 思想：基于分治的思想：在待排序表中任取一个元素pivot作为基准，通过一趟排序将待排序表划分为独立的两部分，使得一部分中所有元素小于等于pivot，另一部分中所有元素大于pivot，则pivot放在了其最终位置上，这个过程称为一趟快速排序。而后递归地对两个子表重复上述过程，直到每部分内只有一个元素或空为止。
      * 性能： 空间复杂度：需要递归工作栈：最坏o(n)，平均o(logn)
      *
-     * @param array
+     * @param arr
      * @param low
      * @param high
      * @return
      */
-    public int[] quickSort(int[] array, int low, int high) {
-        if (low < high) {  //递归跳出的条件
-            int mid = partition(array, low, high); //划分，得到枢值所在的下表
-            quickSort(array, low, mid - 1);  //依次对两个子表进行递归排序
-            quickSort(array, mid + 1, high);
+    private static void qsort(int[] arr, int low, int high) {
+        if (low < high) {
+            int pivot = partition(arr, low, high);        //将数组分为两部分
+            qsort(arr, low, pivot - 1);                   //递归排序左子数组
+            qsort(arr, pivot + 1, high);                  //递归排序右子数组
         }
-        return array;
     }
 
-    //快速排序的划分函数
-    public int partition(int[] array, int low, int high) {
-        int pivot = array[low];  //每次取数组中的第一个元素为基准
-        while (low < high) {  //跳出循环的条件
-            while (low < high && array[high] > pivot) {  //从右边开始找到第一个小于或等于pivot的值
-                high--;
-            }
-            while (low < high && array[low] < pivot) {   //从左边开始找到第一个大于或等于pivot的值
-                low++;
-            }
-            int temp = array[low];   //交换
-            array[low] = array[high];
-            array[high] = temp;
-            if (low < high && array[low] == pivot && array[high] == pivot) {  //特殊情况
-                low++;
-            }
+    private static int partition(int[] arr, int low, int high) {
+        int pivot = arr[low];     //枢轴记录
+        while (low < high) {
+            while (low < high && arr[high] >= pivot) --high;
+            arr[low] = arr[high];             //交换比枢轴小的记录到左端
+            while (low < high && arr[low] <= pivot) ++low;
+            arr[high] = arr[low];           //交换比枢轴小的记录到右端
         }
+        //扫描完成，枢轴到位
+        arr[low] = pivot;
+        //返回的是枢轴的位置
         return low;
     }
 
